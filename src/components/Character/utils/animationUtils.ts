@@ -1,13 +1,12 @@
 import * as THREE from "three";
-import { GLTF } from "three-stdlib";
 import { eyebrowBoneNames, typingBoneNames } from "../../../data/boneData";
 
-const setAnimations = (gltf: GLTF) => {
+const setAnimations = (gltf: any) => {
   let character = gltf.scene;
   let mixer = new THREE.AnimationMixer(character);
   if (gltf.animations) {
     const introClip = gltf.animations.find(
-      (clip) => clip.name === "introAnimation"
+      (clip: THREE.AnimationClip) => clip.name === "introAnimation",
     );
     const introAction = mixer.clipAction(introClip!);
     introAction.setLoop(THREE.LoopOnce, 1);
@@ -34,22 +33,24 @@ const setAnimations = (gltf: GLTF) => {
   }
   function startIntro() {
     const introClip = gltf.animations.find(
-      (clip) => clip.name === "introAnimation"
+      (clip: THREE.AnimationClip) => clip.name === "introAnimation",
     );
     const introAction = mixer.clipAction(introClip!);
     introAction.clampWhenFinished = true;
     introAction.reset().play();
     setTimeout(() => {
-      const blink = gltf.animations.find((clip) => clip.name === "Blink");
+      const blink = gltf.animations.find(
+        (clip: THREE.AnimationClip) => clip.name === "Blink",
+      );
       mixer.clipAction(blink!).play().fadeIn(0.5);
     }, 2500);
   }
-  function hover(gltf: GLTF, hoverDiv: HTMLDivElement) {
+  function hover(gltf: any, hoverDiv: HTMLDivElement) {
     let eyeBrowUpAction = createBoneAction(
       gltf,
       mixer,
       "browup",
-      eyebrowBoneNames
+      eyebrowBoneNames,
     );
     let isHovering = false;
     if (eyeBrowUpAction) {
@@ -84,10 +85,10 @@ const setAnimations = (gltf: GLTF) => {
 };
 
 const createBoneAction = (
-  gltf: GLTF,
+  gltf: any,
   mixer: THREE.AnimationMixer,
   clip: string,
-  boneNames: string[]
+  boneNames: string[],
 ): THREE.AnimationAction | null => {
   const AnimationClip = THREE.AnimationClip.findByName(gltf.animations, clip);
   if (!AnimationClip) {
@@ -102,16 +103,16 @@ const createBoneAction = (
 
 const filterAnimationTracks = (
   clip: THREE.AnimationClip,
-  boneNames: string[]
+  boneNames: string[],
 ): THREE.AnimationClip => {
   const filteredTracks = clip.tracks.filter((track) =>
-    boneNames.some((boneName) => track.name.includes(boneName))
+    boneNames.some((boneName) => track.name.includes(boneName)),
   );
 
   return new THREE.AnimationClip(
     clip.name + "_filtered",
     clip.duration,
-    filteredTracks
+    filteredTracks,
   );
 };
 

@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
+import { DRACOLoader, GLTFLoader } from "three-stdlib";
 import { setCharTimeline, setAllTimeline } from "../../utils/GsapScroll";
 import { decryptFile } from "./decrypt";
 
 const setCharacter = (
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera
+  camera: THREE.PerspectiveCamera,
 ) => {
   const loader = new GLTFLoader();
   const dracoLoader = new DRACOLoader();
@@ -14,18 +14,18 @@ const setCharacter = (
   loader.setDRACOLoader(dracoLoader);
 
   const loadCharacter = () => {
-    return new Promise<GLTF | null>(async (resolve, reject) => {
+    return new Promise<any | null>(async (resolve, reject) => {
       try {
         const encryptedBlob = await decryptFile(
           "/models/character.enc?v=2",
-          "MyCharacter12"
+          "MyCharacter12",
         );
         const blobUrl = URL.createObjectURL(new Blob([encryptedBlob]));
 
         let character: THREE.Object3D;
         loader.load(
           blobUrl,
-          async (gltf) => {
+          async (gltf: any) => {
             character = gltf.scene;
             await renderer.compileAsync(character, camera, scene);
             character.traverse((child: any) => {
@@ -34,12 +34,17 @@ const setCharacter = (
 
                 // Change clothing colors to match site theme
                 if (mesh.material) {
-                  if (mesh.name === "BODY.SHIRT") { // The shirt mesh
-                    const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
+                  if (mesh.name === "BODY.SHIRT") {
+                    // The shirt mesh
+                    const newMat = (
+                      mesh.material as THREE.Material
+                    ).clone() as THREE.MeshStandardMaterial;
                     newMat.color = new THREE.Color("#8B4513");
                     mesh.material = newMat;
                   } else if (mesh.name === "Pant") {
-                    const newMat = (mesh.material as THREE.Material).clone() as THREE.MeshStandardMaterial;
+                    const newMat = (
+                      mesh.material as THREE.Material
+                    ).clone() as THREE.MeshStandardMaterial;
                     newMat.color = new THREE.Color("#000000");
                     mesh.material = newMat;
                   }
@@ -61,10 +66,10 @@ const setCharacter = (
             dracoLoader.dispose();
           },
           undefined,
-          (error) => {
+          (error: any) => {
             console.error("Error loading GLTF model:", error);
             reject(error);
-          }
+          },
         );
       } catch (err) {
         reject(err);
