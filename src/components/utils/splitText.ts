@@ -5,7 +5,8 @@ import { SplitText } from "gsap-trial/SplitText";
 
 interface ParaElement extends HTMLElement {
   anim?: gsap.core.Animation;
-  split?: SplitText;
+  split?: any;
+  // split?: SplitText;
 }
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
@@ -32,7 +33,7 @@ export default function setSplitText() {
     });
 
     para.anim = gsap.fromTo(
-      para.split.words,
+      para.split?.words,
       { autoAlpha: 0, y: 80 },
       {
         autoAlpha: 1,
@@ -58,7 +59,7 @@ export default function setSplitText() {
       linesClass: "split-line",
     });
     title.anim = gsap.fromTo(
-      title.split.chars,
+      title.split?.chars,
       { autoAlpha: 0, y: 80, rotate: 10 },
       {
         autoAlpha: 1,
@@ -76,5 +77,9 @@ export default function setSplitText() {
     );
   });
 
-  ScrollTrigger.addEventListener("refresh", () => setSplitText());
+  ScrollTrigger.addEventListener("refreshInit", () => {
+  document.querySelectorAll(".para, .title").forEach((el: any) => {
+    el.split?.revert();
+  });
+});
 }
