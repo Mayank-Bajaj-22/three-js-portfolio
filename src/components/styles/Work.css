@@ -50,7 +50,7 @@
 .carousel-content {
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 0px;
   width: 100%;
 }
 
